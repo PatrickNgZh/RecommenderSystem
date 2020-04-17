@@ -75,12 +75,28 @@ def recommend(path, user_id):
     recommend_song_list = map(ratings.index, heapq.nlargest(5, ratings))
     recommend_song_list = set(recommend_song_list)
 
-
     recommend_list = list()
     for song_index in recommend_song_list:
         recommend_list.append(songs[lut[song_index]])
 
-    return recommend_list
+
+    df = pd.read_csv(path)
+    songs_info = dict()
+    for row in df.iterrows():
+        if row[1]['song_id'] not in songs_info:
+            songs_info[row[1]['song_id']] = list()
+            songs_info[row[1]['song_id']].append(row[1]['song_name'])
+            songs_info[row[1]['song_id']].append(row[1]['artist_name'])
+
+    recommend_song_info = list()
+    for song_id in recommend_list:
+        temp = list()
+        temp.append(song_id)
+        for data in songs_info[song_id]:
+            temp.append(data)
+        recommend_song_info.append(temp)
+
+    return recommend_song_info
 
 
 if __name__ == '__main__':
