@@ -75,9 +75,10 @@ def recommend(path, user_id):
     recommend_song_list = map(ratings.index, heapq.nlargest(5, ratings))
     recommend_song_list = set(recommend_song_list)
 
+
     recommend_list = list()
     for song_index in recommend_song_list:
-        recommend_list.append(lut[song_index])
+        recommend_list.append(songs[lut[song_index]])
 
     return recommend_list
 
