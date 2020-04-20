@@ -78,13 +78,12 @@ def callback():
 
 
 def handle_PostbackEvent(event):
+    msg = ''
     if event.postback.data == "input":
         msg = TextSendMessage('Please input the user id:')
-        line_bot_api.reply_message(event.reply_token, msg)
-    if event.postback.data == "OK":
-        msg = TextSendMessage(text='The format is as follows. \n张学友,周杰伦,林俊杰,陈奕迅,Mike Jackson')
-        line_bot_api.reply_message(event.reply_token, msg)
-    if event.postback.data == 'new':
+    elif event.postback.data == "OK":
+        msg = TextSendMessage(text='The format is as follows. \n张学友,周杰伦,林俊杰,陈奕迅,Michael Jackson')
+    elif event.postback.data == 'new':
         msg = TemplateSendMessage(
             alt_text='Buttons template',
             template=ButtonsTemplate(
@@ -99,11 +98,12 @@ def handle_PostbackEvent(event):
                 ]
             )
         )
-        line_bot_api.reply_message(event.reply_token, msg)
-    if event.postback.data == "old":
+    elif event.postback.data == "old":
+        line_bot_api.push_message(event.source.user_id,
+                                  TextSendMessage(text='Recommending...'))
         songs = list()
         for i in range(10):
-            url = 'https://music.jeeas.cn/v1/music/detail?id=1436709403'
+            url = 'https://musicapi.leanapp.cn/song/detail?ids=1436709403'
             html = requests.get(url).text
             song = json.loads(html)
             song_img = song['songs'][0]['al']['picUrl']
@@ -127,7 +127,7 @@ def handle_PostbackEvent(event):
         )
     else:
         msg = TextSendMessage('error')
-        line_bot_api.reply_message(event.reply_token, msg)
+    line_bot_api.reply_message(event.reply_token, msg)
 
 
 # Handler function for Text Message
@@ -166,7 +166,7 @@ def handle_TextMessage(event):
                     PostbackAction(
                         label='User',
                         display_text='User',
-                        data='input'
+                        data='old'
                     )
                 ]
             )
